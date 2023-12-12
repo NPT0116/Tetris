@@ -34,23 +34,25 @@ Block  Tetris:: randomBlock()
 
 void Tetris ::  hand_input(Event &event)
 {
-    switch (event.key.code)
-    {
-    case Keyboard::Left:
-        moveBlockLeft();
-        break;
-    case Keyboard::Right:
-        moveBlockRight();
-        break;
-    case Keyboard::Down:
-        moveBlockDown();
-        break;
-    // case Keyboard::Space:
-    //     moveBlockSpace();
-    //     break;
-    default:
-        break;
-    }
+    // xem coi sự kiện có phải là keypress không
+
+        switch (event.key.code)
+        {
+        case Keyboard::Left:
+            moveBlockLeft();
+            break;
+        case Keyboard::Right:
+            moveBlockRight();
+            break;
+        case Keyboard::Down:
+            moveBlockDown();
+            break;
+        // case Keyboard::Space:
+        //     moveBlockSpace();
+        //     break;
+        default:
+            break;
+        }   
 }
 
 void Tetris:: moveBlockLeft()
@@ -70,5 +72,6 @@ void Tetris :: moveBlockDown ()
 void Tetris :: Draw(RenderWindow &window)
 {
     game.draw_cell(window);
+    
     currBlock.draw(window);
 }

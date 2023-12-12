@@ -20,11 +20,14 @@ int main()
     {
         Event event;
 
-        tetris.hand_input(event);
         while (window.pollEvent(event))
         {
             if (event.type == Event::Closed)
                 window.close();
+            if (event.type == Event::KeyPressed)
+            {
+                 tetris.hand_input(event);
+            }
         }
         {
 

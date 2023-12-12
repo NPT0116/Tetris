@@ -13,11 +13,12 @@ void Block :: draw (RenderWindow &window)
 {
     vector<Position> pos = get_curr_position();
     RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
-    // cout<<pos.size()<<endl;
+
     for (Position po : pos)
     {  
         cell.setPosition(static_cast<float>(cell_size * po.col  ), static_cast<float>(cell_size * po.row ));
         cell.setFillColor(colors[id]);
+
         window.draw(cell);
     }
 }
@@ -26,6 +27,7 @@ void Block :: move (int row, int col)
 {
     row_margin += row;
     col_margin += col;
+    cout<<row_margin<<" "<<col_margin<<endl;
 }
 
 vector <Position> Block :: get_curr_position()

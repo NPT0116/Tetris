@@ -6,11 +6,11 @@
 class Block
 {
 protected:
-    int rotate;
     map <int,vector <Position>> block;
     int id  ;
-    vector <Color > colors = GameBox::get_cell_colors();
     int cell_size;
+    vector <Color > colors = GameBox::get_cell_colors();
+    int rotate;
 public:
 //độ dời của hàng và cột dùng cho hàm move
     int row_margin = 0 ;

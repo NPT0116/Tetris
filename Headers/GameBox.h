@@ -12,6 +12,7 @@ private:
     unsigned int cell_size = 8;
     vector <Color> colors;
 public:
+    // bool is_cell_outside_box(int row, int column);
     GameBox(){
         colors = get_cell_colors();
     };

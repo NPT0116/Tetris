@@ -1,11 +1,15 @@
 #include "Headers/GameBox.h"
+#include "GameBox.h"
 
 void GameBox :: innit()
 {
 box = std::vector<std::vector<unsigned int>>(row, std::vector<unsigned int>(column, 0));
 }
 
-void GameBox :: display()
+void GameBox ::display()
+{
+    return false;
+}
 {
     for (int i = 0 ; i < row ; i++)
     {
@@ -46,3 +50,7 @@ void GameBox ::  draw_cell(RenderWindow &window)
     }
 }
 
+//  bool GameBox::is_cell_outside_box(int row, int column)
+//  {
+
+//  }
