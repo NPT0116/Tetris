@@ -4,6 +4,10 @@
         "map": "cpp",
         "atomic": "cpp",
         "ios": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "__bit_reference": "cpp",
+        "bitset": "cpp",
+        "unordered_map": "cpp",
+        "chrono": "cpp"
     }
 }

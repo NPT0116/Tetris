@@ -32,7 +32,7 @@ int main()
 
     sf::Clock clock;
     float elapsedTime = 0.0f;
-    float interval = 0.5f; // 1 second interval
+    float interval = 0.2f; // 1 second interval
     window.clear(Color(0, 0, 0));
     while (window.isOpen())
     {
@@ -46,6 +46,11 @@ int main()
             {
                 tetris.hand_input(event);
             }
+            if (tetris.gameOver && event.type == Event::KeyPressed)
+            {
+                tetris.gameOver = false;
+                tetris.restart_game();
+            }
         }
 
         if (trigger_event(clock, elapsedTime, interval))
@@ -53,7 +58,6 @@ int main()
             tetris.moveBlockDown();
         }
         tetris.box.display();
-        tetris.box.is_completed();
         tetris.Draw(window);
         window.display();
     }

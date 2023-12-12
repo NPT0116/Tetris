@@ -21,4 +21,5 @@ public:
     void move (int, int );
     //hàm dùng để lấy vị trí hiện tại của block
     vector <Position> get_curr_position();
+    
 };

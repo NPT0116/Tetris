@@ -67,9 +67,9 @@ bool GameBox ::  is_empty_cell(int row, int col)
     }
     return false;
 }
-int GameBox::is_completed()
+int GameBox::number_completed_row()
 {
-    int completed = 0 ;
+    int res = 0 ;
     for (int  i = 0 ; i < row; i++)
     {
         int count  = 0 ; 
@@ -82,24 +82,17 @@ int GameBox::is_completed()
         }
         if (count == column)
         {
-            completed++;
-            clear_row(i);
-        }
-        else
-        {
-            if (completed != 0)
-            {
-                move_row(i , completed);
-            }
+            res++;
         }
     }
-    return completed;
+    return res;
 }
 void GameBox:: move_row(int row_index,int completed)
 {
     for (int  i = 0 ; i < column; i++)
     {
-        box[row_index - completed][i] = box[row_index][i];
+        box[row_index + completed][i] = box[row_index][i];
+        // box[row_index][i] = 9;
     }
 }
 void GameBox ::  clear_row(int row)
@@ -107,5 +100,46 @@ void GameBox ::  clear_row(int row)
     for (int i = 0 ; i < column ; i ++)
     {
         box[row][i] = 9;
+    }
+}
+bool GameBox :: is_completed_row(int row)
+{
+    int count = 0 ;
+    for (int i = 0 ;  i < column; i++)
+    {
+        if (box[row][i] == 9)
+            return false;
+    }
+
+    return true;
+
+}
+void GameBox :: update_box()
+{
+    int count = 0 ;
+    for (int i = row - 1 ; i >= 0 ; i--)
+    {
+        if ( is_completed_row(i))
+        {
+            count ++;
+            clear_row(i);
+        }
+        else {
+            move_row(i, count);
+        }
+    }
+}
+
+void GameBox :: game_over()
+{
+    for (int  i = 0 ; i < row ; i++)
+    {
+        for (int j = 0 ; j < column ; j++)
+        {
+            if (box[i][j] != 9)
+            {
+                box [i][j] = 7;
+            }
+        }
     }
 }

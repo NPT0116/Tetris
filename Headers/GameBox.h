@@ -24,7 +24,10 @@ public:
 	static vector<Color> get_cell_colors();
     void draw_cell(RenderWindow &window);
     void lock_block();
-    int is_completed();
+    int number_completed_row();
     void move_row(int row_index,int completed);
     void clear_row(int row);
+    void update_box();
+    bool is_completed_row(int row);
+    void game_over();
 };

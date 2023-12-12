@@ -38,6 +38,7 @@ void Tetris ::  hand_input(Event &event)
 
         switch (event.key.code)
         {
+        
         case Keyboard::Left:
             moveBlockLeft();
             break;
@@ -57,31 +58,38 @@ void Tetris ::  hand_input(Event &event)
 
 void Tetris:: moveBlockLeft()
 {
+    if (!gameOver)
+    {
     currBlock.move(0,-1);
     if (is_block_outside()||!is_block_fit())
     {
     currBlock.move(0,1);
         
     }
-    
+    }
 }
 
 void Tetris::moveBlockRight()
 {
+    if (!gameOver)
+    {
     currBlock.move(0,1);
     if (is_block_outside() || !is_block_fit())
     {
-    currBlock.move(0,-1);
-        
+    currBlock.move(0,-1);   
+    }
     }
 }
 void Tetris :: moveBlockDown ()
 {
+    if (!gameOver)
+    {
     currBlock.move(1,0);
 if (is_block_outside() || !is_block_fit())
     {
     currBlock.move(-1,0);
     lock_block();//////chặn block lại ko cho dịch qua trái phải khi chạm đáy
+    }
     }
 }
 
@@ -125,8 +133,15 @@ void Tetris :: lock_block()
         box.box[po.row][po.col] = currBlock.id;
     }
     currBlock = nextBlock;
+    if (!is_block_fit())
+    {
+        currBlock.id = 7;
+        //set lại id block current  vì end game rồi và mình muốn chuyển cả block hiện tại này có giá trị là xám grey có id là 7
+        game_over();
+    }
     nextBlock = randomBlock();
-}
+    box.update_box();
+}   
 
 bool Tetris :: is_block_fit()
 {
@@ -139,4 +154,21 @@ bool Tetris :: is_block_fit()
         }
     }
     return true;
+}
+
+
+void Tetris :: game_over()
+{
+    gameOver = true;
+    box.game_over();
+}
+
+
+
+void Tetris ::  restart_game()
+{
+    box.innit();
+    blocks = get_all_type_block();
+    currBlock = randomBlock();
+    nextBlock = randomBlock();
 }
