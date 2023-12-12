@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "atomic": "cpp",
+        "ios": "cpp"
     }
 }

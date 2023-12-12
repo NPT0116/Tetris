@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Headers/GameBox.h"
 #include "Headers/Block.h"
-#include "L_Block.cpp"
+#include "Block_Type.cpp"
 
 int main()
 {
@@ -16,6 +16,12 @@ int main()
     gameBox.display();
 
     L_block L;
+    J_block J;
+    I_block I;//bug
+    O_block O;
+    S_block S;//bug
+    T_block T;
+    Z_block Z;
 
     sf::RenderWindow window(sf::VideoMode(cell * column * screen_size, cell * row * screen_size), "Tetris", sf::Style::Close);
     window.setView(sf::View(sf::FloatRect(0, 0,  cell * column, cell * row)));
@@ -33,7 +39,7 @@ int main()
         }
         window.clear(sf::Color(0,0,0));
         gameBox.draw_cell(window);
-        L.draw(window);
+        S.draw(window);
         // for (int i = 0; i < column; i++)
         // {
         //     for (int j = 0; j < row; j++)

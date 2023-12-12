@@ -40,7 +40,7 @@ void GameBox ::  draw_cell(RenderWindow &window)
             RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
 
         	cell.setPosition(static_cast<float>(cell_size * j ), static_cast<float>(cell_size * i ));
-            cell.setFillColor(colors[cell_value]);
+            cell.setFillColor(colors[8]);
             window.draw(cell);
         }
     }
