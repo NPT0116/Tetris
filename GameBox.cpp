@@ -41,7 +41,7 @@ void GameBox ::  draw_cell(RenderWindow &window)
             // trừ một ở đây nhằm làm tăng độ chính xác của pixel khi hiển thị trong box chơi game
             RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
 
-        	cell.setPosition(static_cast<float>(cell_size * j ), static_cast<float>(cell_size * i ));
+        	cell.setPosition(static_cast<float>(cell_size * j )+ 1, static_cast<float>(cell_size * i )+1);
             cell.setFillColor(colors[cell_value]);
             window.draw(cell);
         }
