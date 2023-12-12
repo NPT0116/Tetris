@@ -12,14 +12,19 @@ private:
     unsigned int cell_size = 8;
     vector <Color> colors;
 public:
-    // bool is_cell_outside_box(int row, int column);
+    bool is_cell_outside_box(int row, int column);
     GameBox(){
         colors = get_cell_colors();
     };
+    bool is_empty_cell(int row, int col);
     void display();
     vector<vector<unsigned int> > box;
     void innit();
     void set_colors();
 	static vector<Color> get_cell_colors();
     void draw_cell(RenderWindow &window);
+    void lock_block();
+    int is_completed();
+    void move_row(int row_index,int completed);
+    void clear_row(int row);
 };

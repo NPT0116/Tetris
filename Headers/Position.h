@@ -7,8 +7,4 @@ public:
     int row;
     int col;
     Position(int ,int );
-    void xuat()
-    {
-        cout<<"row : "<<row<<" col: "<<col<<endl;
-    }
 };

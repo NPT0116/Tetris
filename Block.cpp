@@ -27,7 +27,7 @@ void Block :: move (int row, int col)
 {
     row_margin += row;
     col_margin += col;
-    cout<<row_margin<<" "<<col_margin<<endl;
+    // cout<<row_margin<<" "<<col_margin<<endl;
 }
 
 vector <Position> Block :: get_curr_position()
@@ -41,3 +41,13 @@ vector <Position> Block :: get_curr_position()
     }
     return curr_pos;
 }
+void Block :: rotate_block()
+{
+    rotate ++;
+    if (rotate == 4)
+    {
+        rotate = 0 ;
+    }
+}
+
+

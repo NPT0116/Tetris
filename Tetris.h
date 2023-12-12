@@ -10,7 +10,7 @@ private:
     Block currBlock;
     Block nextBlock;
 public:
-    GameBox game;
+    GameBox box;
     vector <Block>blocks;
     vector <Block>get_all_type_block();
     Tetris();
@@ -22,5 +22,9 @@ public:
     void moveBlockDown();
     void Draw(RenderWindow &window);
     void moveBlockSpace();
+    bool is_block_outside();
+    void rotate_block();
+    void lock_block();
+    bool is_block_fit();
 };
 

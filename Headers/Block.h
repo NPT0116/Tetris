@@ -7,12 +7,13 @@ class Block
 {
 protected:
     map <int,vector <Position>> block;
-    int id  ;
     int cell_size;
     vector <Color > colors = GameBox::get_cell_colors();
     int rotate;
 public:
 //độ dời của hàng và cột dùng cho hàm move
+    int id  ;
+    void rotate_block();
     int row_margin = 0 ;
     int col_margin = 0 ;
     Block();
