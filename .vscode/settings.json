@@ -3,6 +3,7 @@
         "vector": "cpp",
         "map": "cpp",
         "atomic": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "ostream": "cpp"
     }
 }

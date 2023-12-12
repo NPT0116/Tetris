@@ -11,7 +11,7 @@ Block :: Block()
 
 void Block :: draw (RenderWindow &window)
 {
-    vector<Position> pos = block[rotate];
+    vector<Position> pos = get_curr_position();
     RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
     // cout<<pos.size()<<endl;
     for (Position po : pos)
@@ -20,4 +20,22 @@ void Block :: draw (RenderWindow &window)
         cell.setFillColor(colors[id]);
         window.draw(cell);
     }
+}
+
+void Block :: move (int row, int col)
+{
+    row_margin += row;
+    col_margin += col;
+}
+
+vector <Position> Block :: get_curr_position()
+{
+    vector <Position> pos = block[rotate];
+    vector <Position> curr_pos;
+    for (Position po : pos)
+    {
+        Position x = Position(po.row + row_margin , po.col + col_margin );
+        curr_pos.push_back(x);
+    }
+    return curr_pos;
 }

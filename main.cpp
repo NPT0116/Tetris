@@ -1,8 +1,6 @@
-#include <SFML/Graphics.hpp>
-#include "Headers/GameBox.h"
-#include "Headers/Block.h"
-#include "Block_Type.cpp"
 
+#include "Tetris.h"
+using namespace sf;
 int main()
 {
     unsigned char row = 20;
@@ -11,44 +9,32 @@ int main()
     unsigned char screen_size = 4;
     unsigned char frame = 16667;
 
-    GameBox gameBox;
-    gameBox.innit();
-    gameBox.display();
+    Tetris tetris;
 
-    L_block L;
-    J_block J;
-    I_block I;//bug
-    O_block O;
-    S_block S;//bug
-    T_block T;
-    Z_block Z;
+    RenderWindow window(VideoMode(cell * column * screen_size, cell * row * screen_size), "Tetris", Style::Close);
+    window.setView(View(FloatRect(0, 0,  cell * column, cell * row)));
 
-    sf::RenderWindow window(sf::VideoMode(cell * column * screen_size, cell * row * screen_size), "Tetris", sf::Style::Close);
-    window.setView(sf::View(sf::FloatRect(0, 0,  cell * column, cell * row)));
-
-    sf::RectangleShape cellShape(sf::Vector2f(cell - 1, cell - 1));
-    cellShape.setFillColor(sf::Color(36, 36, 88));
-
+    RectangleShape cellShape(Vector2f(cell - 1, cell - 1));
+    cellShape.setFillColor(Color(36, 36, 88));
     while (window.isOpen())
     {
-        sf::Event event;
+        Event event;
+
+        tetris.hand_input(event);
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == Event::Closed)
                 window.close();
         }
-        window.clear(sf::Color(0,0,0));
-        gameBox.draw_cell(window);
-        S.draw(window);
-        // for (int i = 0; i < column; i++)
-        // {
-        //     for (int j = 0; j < row; j++)
-        //     {
-        //         sf::Vector2f position(cell * i, cell * j);
-        //         cellShape.setPosition(position);
-        //         window.draw(cellShape);
-        //     }
-        // }
+        {
+
+        window.clear(Color(0,0,0));
+        cout<<"clear"<<endl;
+        }
+        {
+        tetris.Draw(window);
+        cout<<"draw"<<endl;
+        }
         window.display();
     }
     window.close();

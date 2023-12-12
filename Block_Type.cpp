@@ -15,6 +15,8 @@ public:
         block[1] = {Position(0,1),Position(1,1),Position(2,1),Position(2,2)};
         block[2] = {Position(1,0),Position(1,1),Position(1,2),Position(2,0)};
         block[3] = {Position(0,0),Position(0,1),Position(1,1),Position(2,1)};
+    // dịch ra giữa màn hình để block rơi xuống gây trung tâm lúc đầu khi xuất hiện)
+        move (0,3);
     }
 
 };
@@ -28,6 +30,8 @@ public:
         block[1] = {Position(0,1),Position(0,2),Position(1,1),Position(2,1)};
         block[2] = {Position(1,0),Position(1,1),Position(1,2),Position(2,2)};
         block[3] = {Position(0,1),Position(1,1),Position(2,0),Position(2,1)};
+        move (0,3);
+
     }
 
 };
@@ -42,6 +46,8 @@ public:
         block[1] = {Position(0,2),Position(1,2),Position(2,2),Position(3,2)};
         block[2] = {Position(2,0),Position(2,1),Position(2,2),Position(2,3)};
         block[3] = {Position(0,1),Position(1,1),Position(2,1),Position(3,1)};
+        move (-1,3);
+
     }
 };
 class O_block : public Block
@@ -55,6 +61,8 @@ public:
         block[1] = {Position(0,0),Position(0,1),Position(1,0),Position(1,1)};
         block[2] = {Position(0,0),Position(0,1),Position(1,0),Position(1,1)};
         block[3] = {Position(0,0),Position(0,1),Position(1,0),Position(1,1)};
+        move (0,3);
+
     }
 };
 class S_block : public Block
@@ -68,10 +76,9 @@ public:
         block[1] = {Position(0,1),Position(1,1),Position(1,2),Position(2,2)};
         block[2] = {Position(1,1),Position(1,2),Position(2,0),Position(2,1)};
         block[3] = {Position(0,0),Position(1,0),Position(1,1),Position(2,1)};
-        for (Position po : block[0])
-        {
-            po.xuat();
-        }
+        move (0,3);
+
+
     }
 };
 
@@ -86,6 +93,8 @@ public:
         block[1] = {Position(0,1),Position(1,1),Position(1,2),Position(2,1)};
         block[2] = {Position(1,0),Position(1,1),Position(1,2),Position(2,1)};
         block[3] = {Position(0,1),Position(1,0),Position(1,1),Position(2,1)};
+        move (0,3);
+
     }
 };
 
@@ -100,5 +109,7 @@ public:
         block[1] = {Position(0,2),Position(1,1),Position(1,2),Position(2,1)};
         block[2] = {Position(1,0),Position(1,1),Position(2,1),Position(2,2)};
         block[3] = {Position(0,1),Position(1,0),Position(1,1),Position(2,0)};
+        move (0,3);
+
     }
 };
