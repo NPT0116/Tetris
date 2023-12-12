@@ -1,5 +1,4 @@
 #include "Headers/GameBox.h"
-#include "GameBox.h"
 
 void GameBox :: innit()
 {
@@ -7,9 +6,6 @@ box = std::vector<std::vector<unsigned int>>(row, std::vector<unsigned int>(colu
 }
 
 void GameBox ::display()
-{
-    return false;
-}
 {
     for (int i = 0 ; i < row ; i++)
     {
