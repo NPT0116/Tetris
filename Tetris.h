@@ -11,6 +11,7 @@ private:
     Block nextBlock;
 public:
     GameBox box;
+    bool drop_block = false;
     bool gameOver = false;
     vector <Block>blocks;
     vector <Block>get_all_type_block();

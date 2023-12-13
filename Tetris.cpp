@@ -51,6 +51,8 @@ void Tetris ::  hand_input(Event &event)
         case Keyboard:: Up:
             rotate_block();
             break;
+            case Keyboard::Space:
+            drop_block = true;
         default:
             break;
         }   
@@ -138,6 +140,10 @@ void Tetris :: lock_block()
         currBlock.id = 7;
         //set lại id block current  vì end game rồi và mình muốn chuyển cả block hiện tại này có giá trị là xám grey có id là 7
         game_over();
+    }
+    if (drop_block== true)
+    {
+       drop_block = false;
     }
     nextBlock = randomBlock();
     box.update_box();
