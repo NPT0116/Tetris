@@ -51,6 +51,12 @@ void Tetris ::  hand_input(Event &event)
         case Keyboard:: Up:
             rotate_block();
             break;
+        case Keyboard:: Space:
+            // while (!lock_block())
+            // {
+            //     moveBlockDown();
+            // }
+            break;
         default:
             break;
         }   

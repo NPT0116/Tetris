@@ -75,7 +75,7 @@ int main()
     unsigned char screen_size = 4;
     unsigned char frame = 16667;*/
 
-    const int cell = 30; // Adjust the cell size if needed
+    const int cell = 8; // Adjust the cell size if needed
     const int column = 10; // Adjust the number of columns
     const int row = 20; // Adjust the number of rows
     const float screen_size = 1.0f;
@@ -110,7 +110,7 @@ int main()
     //Game
     Tetris tetris;
 
-    RenderWindow window(VideoMode(/*cell * column * screen_size * 2.6*/800, /*cell * row * screen_size * 1.4*/900), "Tetris", Style::Close);
+    RenderWindow window(VideoMode(/*cell * column * screen_size * 2.6*/600, /*cell * row * screen_size * 1.4*/700), "Tetris", Style::Close);
     window.setView(View(FloatRect(-3, -2, 140, 165)));
 
     RectangleShape cellShape(Vector2f(cell - 1, cell - 1));
@@ -118,7 +118,7 @@ int main()
 
     //background
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("D:/tetris/tetris/resoure/new.jpg")) {
+    if (!backgroundTexture.loadFromFile("resoure/new.jpg")) {
         std::cerr << "Error loading background texture" << std::endl;
         return 1;
     }
