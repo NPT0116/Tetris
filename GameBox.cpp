@@ -29,7 +29,8 @@ vector <Color> GameBox:: get_cell_colors()
     Color grey(73, 73, 85);
     Color dark_blue(36, 36, 85);
     Color background_cell(35,26,88);
-    return {light_blue,blue,orange,yellow,light_green,purple,red,grey, dark_blue,background_cell};
+    Color White(255, 255, 255);
+    return {light_blue,blue,orange,yellow,light_green,purple,red,grey, dark_blue,background_cell,White};
 }
 void GameBox ::  draw_cell(RenderWindow &window)
 {
@@ -38,7 +39,6 @@ void GameBox ::  draw_cell(RenderWindow &window)
         for (int j = 0 ; j < column; j++)
         {
             int cell_value = box[i][j];
-            // trừ một ở đây nhằm làm tăng độ chính xác của pixel khi hiển thị trong box chơi game
             RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
 
         	cell.setPosition(static_cast<float>(cell_size * j ), static_cast<float>(cell_size * i ));
@@ -61,7 +61,7 @@ void GameBox ::  draw_cell(RenderWindow &window)
 
 bool GameBox ::  is_empty_cell(int row, int col)
 {
-    if (box[row][col]== 9)
+    if (box[row][col] == 9 || box[row][col] == 7)
     {
         return true;
     }
@@ -97,10 +97,12 @@ void GameBox:: move_row(int row_index,int completed)
 }
 void GameBox ::  clear_row(int row)
 {
+
     for (int i = 0 ; i < column ; i ++)
     {
-        box[row][i] = 9;
+        box[row][i] = 10;
     }
+    
 }
 bool GameBox :: is_completed_row(int row)
 {
@@ -114,20 +116,28 @@ bool GameBox :: is_completed_row(int row)
     return true;
 
 }
-void GameBox :: update_box()
+int GameBox :: update_box(RenderWindow &window)
 {
     int count = 0 ;
     for (int i = row - 1 ; i >= 0 ; i--)
     {
-        if ( is_completed_row(i))
+        if (is_completed_row(i))
         {
+
             count ++;
             clear_row(i);
+            draw_cell(window);
         }
-        else {
+        else if (count > 0) {
+            window.display();
+            sleep(seconds(0.01f));
             move_row(i, count);
         }
+        else {      
+            move_row(i, count); 
+        }
     }
+    return count; 
 }
 
 void GameBox :: game_over()

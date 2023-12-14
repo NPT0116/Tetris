@@ -9,14 +9,14 @@ Block :: Block()
 }
 
 
-void Block :: draw (RenderWindow &window)
+void Block :: draw (RenderWindow &window, int offsetx, int offsety)
 {
     vector<Position> pos = get_curr_position();
     RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
 
     for (Position po : pos)
     {  
-        cell.setPosition(static_cast<float>(cell_size * po.col  ), static_cast<float>(cell_size * po.row ));
+        cell.setPosition(static_cast<float>(cell_size * po.col + offsetx), static_cast<float>(cell_size * po.row + offsety));
         cell.setFillColor(colors[id]);
 
         window.draw(cell);

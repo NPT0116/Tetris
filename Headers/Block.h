@@ -17,7 +17,7 @@ public:
     int row_margin = 0 ;
     int col_margin = 0 ;
     Block();
-    void draw(RenderWindow &window);
+    void draw(RenderWindow &window, int offsetx, int offsety);
     void move (int, int );
     //hàm dùng để lấy vị trí hiện tại của block
     vector <Position> get_curr_position();

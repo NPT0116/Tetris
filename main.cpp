@@ -118,7 +118,7 @@ int main()
 
     //background
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("resoure/new.jpg")) {
+    if (!backgroundTexture.loadFromFile("resoure/test.jpg")) {
         std::cerr << "Error loading background texture" << std::endl;
         return 1;
     }
@@ -127,9 +127,7 @@ int main()
     backgroundSprite.setPosition(-5, -5);
 
     //dropping
-    sf::Clock clock;
-    float elapsedTime = 0.0f;
-    float interval = 0.5f; // 1 second interval
+
     window.clear(Color(0, 0, 0));
 
     //shapes
@@ -141,27 +139,30 @@ int main()
     sf::RectangleShape recNextShadow = createRectangleShape(40, 40, 90, 118, sf::Color(0, 72, 78));
     sf::RectangleShape recBack = createRectangleShape(81, 161, 0, 0, sf::Color(30, 6, 64));
 
-
+    // Thời gian
+     
     while (window.isOpen())
     {
+        window.setFramerateLimit(20000); 
         Event event;
-        
+        tetris.Drop_ghost_block(); 
         while (window.pollEvent(event))
         {
             if (event.type == Event::Closed)
                 window.close();
             if (event.type == Event::KeyPressed)
             {
-                tetris.hand_input(event);
+                tetris.hand_input(event, window);
             }
         }
         if (tetris.drop_block == true)
         {
-            tetris.moveBlockDown();
+
+            tetris.moveBlockDown(window);
         }
-        if (trigger_event(clock, elapsedTime, interval))
+        if (trigger_event(tetris.clock_event, tetris.elapsedTime, tetris.interval))
         {
-            tetris.moveBlockDown();
+            tetris.moveBlockDown(window);
         }
         {
             window.clear(Color(0, 0, 0));
@@ -170,10 +171,8 @@ int main()
         window.draw(backgroundSprite);
         window.draw(recBack);
 
-        {
-            tetris.Draw(window);
-            //cout << "draw" << endl;
-        }
+
+        tetris.Draw(window);
         //rec
         window.draw(recNextShadow);
         window.draw(recScoreShadow);
@@ -182,10 +181,44 @@ int main()
         window.draw(recScore);
         window.draw(recSpeed);
         //text
+        // Thời gian và tăng tốc độ
+        if (!tetris.gameOver) {
+            tetris.end = clock();
+         }
+        float runned_time = (float)(tetris.end - tetris.begin)/CLOCKS_PER_SEC;
+        stringstream stream;
+        stream << std::fixed << std::setprecision(2) << runned_time;
+        Text run_time;
+        run_time.setFont(f);
+        run_time.setCharacterSize(10);
+        run_time.setFillColor(fillColor);
+        run_time.setString(stream.str());
+        run_time.setPosition(100, 26);
+        run_time.setOutlineColor({ 0,0,0 });
+        run_time.setOutlineThickness(3);
+
+        // Số điểm
+        Text num_score;
+        num_score.setFont(f);
+        num_score.setCharacterSize(10);
+        num_score.setFillColor(fillColor);
+        num_score.setString(to_string(tetris.score));
+        num_score.setPosition(88, 26);
+        num_score.setOutlineColor({ 0,0,0 });
+        num_score.setOutlineThickness(3);
+        
+        
+        // draw
+        window.draw(run_time); 
+        window.draw(num_score);
         window.draw(nextBlock);
         window.draw(score);
         window.draw(speed);
+
+        // Vẽ block kế tiếp
+        tetris.draw_next_block(window);
         window.display();
+        
     }
     window.close();
     return 0;
