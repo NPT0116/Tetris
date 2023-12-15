@@ -1,13 +1,17 @@
-#pragma once
+﻿#pragma once
 #include "Block_Type.cpp"
-#include "Headers/Position.h"
+#include "Position.h"
 #include "SFML/Audio/Sound.hpp"
 #include <vector>
 #include <time.h>
 #include <SFML/Audio.hpp>
 #include <ctime>
-#include <sstream>>
+#include <sstream>
 #include <iomanip>
+#include <chrono>
+#include <future>
+#include <thread>
+#include <queue>
 using namespace std;
 using namespace sf;
 class Tetris
@@ -16,12 +20,12 @@ private:
     Block currBlock;
     Block nextBlock;
     Block ghost_Block;
-    
+    vector <int> skill_list;
 public:
     // Thời gian block move down
     sf::Clock clock_event;
-    float elapsedTime ;
-    float interval ; 
+    float elapsedTime;
+    float interval;
 
 
     GameBox box;
@@ -56,11 +60,29 @@ public:
     // Âm thanh
     Music game_sound;
     Music flip_sound;
-    Music clear_sound; 
-    Music drop_sound; 
-    Music end_sound; 
+    Music clear_sound;
+    Music drop_sound;
+    Music end_sound;
+    Music denied_sound;
+    Music disapear_sound;
     // Thời gian game chạy 
     clock_t begin, end;
-
+    // Tốc độ rơi
+    double speed;
+    // Skill
+    int Next_skill;
+    void Random_Next_skill();
+    void Boom_block(RenderWindow& window);
+    void Clear_row(RenderWindow& window);
+    void Pick_Block(RenderWindow& window);
+    void Slow_speed(RenderWindow& windows);
+    int count_score;
+    void Draw_next_skill(RenderWindow& window);
+    void Count_skill(int& bb, int& cr, int& pb, int& sp);
+    void Draw_count_skill(RenderWindow& window);
+    bool skill_list_check(int n);
+    int wait_for_fill;
+    bool temp_int;
     ~Tetris();
 };
+

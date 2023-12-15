@@ -1,5 +1,8 @@
-#include "Tetris.h"
+﻿#include "Tetris.h"
+#include "TextBox.h"
+#include "Interface.hpp"
 using namespace sf;
+
 //login
 struct scn2
 {
@@ -19,6 +22,7 @@ struct account
 {
     std::string email;
     std::string password;
+	int maxScore = 0;
 };
 
 int scene = 1, i = 1;
@@ -27,12 +31,13 @@ scn3 scene3;
 account acc[100];
 bool first = true;
 
-void input()
+void input( )
 {
     std::ifstream fin("data.txt", std::ios::in | std::ios::out);
     while (fin >> acc[i].email)
     {
         fin >> acc[i].password;
+		fin >> acc[i].maxScore;
         i++;
     }
     fin.close();
@@ -80,67 +85,100 @@ sf::RectangleShape createRectangleShape(float sizeX, float sizeY, float posX, fl
     return rectangle;
 }
 
-void playGame(ofstream &fout, int cell, int column, int row, int screen_size) {
+void playGame(RenderWindow& gameWindow, ofstream &fout, int cell, int column, int row, int screen_size, int &maxScore) {
+	gameWindow.setView(View(FloatRect(5, 35, 200, 225)));
+	//text - ingame
+	string font = "resoure/CallOfOpsDutyIi-7Bgm4.ttf";
+	sf::Font f; int characterSize = 13; sf::Color fillColor = sf::Color::White;
+	if (!f.loadFromFile(font))
+	{
+		std::cerr << "Error loading font: " << font << std::endl;
+	}
+	Text nextBlock;
+	nextBlock.setFont(f);
+	nextBlock.setCharacterSize(characterSize);
+	nextBlock.setFillColor(fillColor);
+	nextBlock.setString("Next");
+	nextBlock.setPosition(65 + 95, 90 + 97);
+	nextBlock.setOutlineThickness(0.5);
+	Text score;
+	score.setFont(f);
+	score.setCharacterSize(characterSize);
+	score.setFillColor(fillColor);
+	score.setString("Score");
+	score.setPosition(65 + 92, 90 + 7);
+	score.setOutlineThickness(0.5);
 
-	RenderWindow gameWindow(VideoMode(/*cell * column * screen_size * 2.6*/800, /*cell * row * screen_size * 1.4*/900), "Tetris", Style::Close);
-	gameWindow.setView(View(FloatRect(-3, -2, 212, 165)));
-    //text - ingame
-    string font = "resoure/CallOfOpsDutyIi-7Bgm4.ttf";
-    sf::Font f; int characterSize = 15; sf::Color fillColor = sf::Color::White;
-    if (!f.loadFromFile(font))
-    {
-        std::cerr << "Error loading font: " << font << std::endl;
-    }
-    Text nextBlock;
-    nextBlock.setFont(f);
-    nextBlock.setCharacterSize(characterSize);
-    nextBlock.setFillColor(fillColor);
-    nextBlock.setString("Next");
-    nextBlock.setPosition(95, 97);
-    Text score;
-    score.setFont(f);
-    score.setCharacterSize(characterSize);
-    score.setFillColor(fillColor);
-    score.setString("Score");
-    score.setPosition(92, 7);
-    Text speed;
-    speed.setFont(f);
-    speed.setCharacterSize(characterSize);
-    speed.setFillColor(fillColor);
-    speed.setString("Speed");
-    speed.setPosition(92, 51);
 
-    //Game - inteerface
-    Tetris tetris;
+	Text speed;
+	speed.setFont(f);
+	speed.setCharacterSize(characterSize);
+	speed.setFillColor(fillColor);
+	speed.setString("Speed");
+	speed.setPosition(65 + 92, 90 + 51);
+	speed.setOutlineThickness(0.5);
 
-    RectangleShape cellShape(Vector2f(cell - 1, cell - 1));
-    cellShape.setFillColor(Color(36, 36, 88));
+	Text next_equipment;
+	next_equipment.setFont(f);
+	next_equipment.setCharacterSize(11);
+	next_equipment.setFillColor(fillColor);
+	next_equipment.setString("       Next\nEquipment");
+	next_equipment.setPosition(10, 90);
+	next_equipment.setOutlineThickness(0.5);
+	//Game - inteerface
+	Tetris tetris;
 
-    //background - ingame
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("resoure/new.jpg")) {
-        std::cerr << "Error loading background texture" << std::endl;
-        return;
-    }
-    sf::Sprite backgroundSprite(backgroundTexture);
-    backgroundSprite.setScale(static_cast<float>(400) / backgroundTexture.getSize().x, static_cast<float>(170) / backgroundTexture.getSize().y);
-    backgroundSprite.setPosition(-5, -5);
+	RectangleShape cellShape(Vector2f(cell - 1, cell - 1));
+	cellShape.setFillColor(Color(36, 36, 88));
 
-    //dropping
+	//background - ingame
+	sf::Texture backgroundTexture;
+	if (!backgroundTexture.loadFromFile("resoure/test.jpg")) {
+		std::cerr << "Error loading background texture" << std::endl;
+		return;
+	}
+	sf::Sprite backgroundSprite(backgroundTexture);
+	backgroundSprite.setScale(static_cast<float>(250) / backgroundTexture.getSize().x, static_cast<float>(312) / backgroundTexture.getSize().y);
+	backgroundSprite.setPosition(-5, -5);
+	// Ảnh titile
+	sf::Texture titile;
+	if (!titile.loadFromFile("resoure/Titile.png")) {
+		// Handle error if the image fails to load
+		cout << "Cant not load image" << endl;
+	}
+
+	// Create a sprite and set its texture
+	sf::Sprite titile2;
+	titile2.setTexture(titile);
+	titile2.setPosition(75, 40);
+	titile2.setScale(0.2, 0.2);
+	//dropping
    // sf::Clock clock;
-    float elapsedTime = 0.0f;
-    float interval = 0.5f; // 1 second interval
-    gameWindow.clear(Color(0, 0, 0));
+	float elapsedTime = 0.0f;
+	float interval = 0.5f; // 1 second interval
+	gameWindow.clear(Color(0, 0, 0));
 
-    //shapes
-    sf::RectangleShape recScore = createRectangleShape(40, 20, 88, 26, sf::Color(39, 139, 75));
-    sf::RectangleShape recScoreShadow = createRectangleShape(40, 20, 90, 28, sf::Color(11, 66, 35));
-    sf::RectangleShape recSpeed = createRectangleShape(40, 20, 88, 70, sf::Color(173, 7, 31));
-    sf::RectangleShape recSpeedShadow = createRectangleShape(40, 20, 90, 72, sf::Color(60, 0, 0));
-    sf::RectangleShape recNext = createRectangleShape(40, 40, 88, 116, sf::Color(6, 171, 165));
-    sf::RectangleShape recNextShadow = createRectangleShape(40, 40, 90, 118, sf::Color(0, 72, 78));
-    sf::RectangleShape recBack = createRectangleShape(81.5, 161.5, -1, -1, sf::Color(30, 6, 64));
-	gameWindow.setView(View(FloatRect(-3, -2, 140, 165)));
+	//shapes
+	sf::RectangleShape recScore = createRectangleShape(40, 20, 65 + 88, 90 + 26, sf::Color(39, 139, 75));
+	sf::RectangleShape recScoreShadow = createRectangleShape(40, 20, 65 + 90, 90 + 28, sf::Color(11, 66, 35));
+	sf::RectangleShape recSpeed = createRectangleShape(40, 20, 65 + 88, 90 + 70, sf::Color(173, 7, 31));
+	sf::RectangleShape recSpeedShadow = createRectangleShape(40, 20, 65 + 90, 90 + 72, sf::Color(60, 0, 0));
+	sf::RectangleShape recNext = createRectangleShape(40, 40, 65 + 88, 90 + 116, sf::Color(6, 171, 165));
+	sf::RectangleShape recNextShadow = createRectangleShape(40, 40, 65 + 90, 90 + 118, sf::Color(0, 72, 78));
+	sf::RectangleShape recBack = createRectangleShape(81.5, 161.5, 65 + -1, 90 + -1, sf::Color(30, 6, 64, 210));
+	// Skill shape 
+	sf::Texture CountSkill;
+	if (!CountSkill.loadFromFile("resoure/Skill/CountSkill.png")) {
+		// Handle error if the image fails to load
+		cout << "Cant not load image" << endl;
+	}
+
+	// Create a sprite and set its texture
+	sf::Sprite CountSkill_sprite;
+	CountSkill_sprite.setTexture(CountSkill);
+	CountSkill_sprite.setPosition(10, 200);
+	CountSkill_sprite.setScale(0.25, 0.25);
+
 	while (gameWindow.isOpen())
 	{
 		gameWindow.setFramerateLimit(20000);
@@ -180,7 +218,9 @@ void playGame(ofstream &fout, int cell, int column, int row, int screen_size) {
 		gameWindow.draw(recNext);
 		gameWindow.draw(recScore);
 		gameWindow.draw(recSpeed);
-		//text
+
+		//text 
+
 		// Thời gian và tăng tốc độ
 		if (!tetris.gameOver) {
 			tetris.end = clock();
@@ -190,12 +230,12 @@ void playGame(ofstream &fout, int cell, int column, int row, int screen_size) {
 		stream << std::fixed << std::setprecision(2) << runned_time;
 		Text run_time;
 		run_time.setFont(f);
-		run_time.setCharacterSize(10);
-		run_time.setFillColor(fillColor);
+		run_time.setCharacterSize(12);
+		run_time.setFillColor(Color(239, 207, 38));
 		run_time.setString(stream.str());
-		run_time.setPosition(100, 26);
+		run_time.setPosition(98 - (stream.str().size() - 3) * 1.7, 70);
 		run_time.setOutlineColor({ 0,0,0 });
-		run_time.setOutlineThickness(3);
+		run_time.setOutlineThickness(0.7);
 
 		// Số điểm
 		Text num_score;
@@ -203,46 +243,82 @@ void playGame(ofstream &fout, int cell, int column, int row, int screen_size) {
 		num_score.setCharacterSize(10);
 		num_score.setFillColor(fillColor);
 		num_score.setString(to_string(tetris.score));
-		num_score.setPosition(88, 26);
+		num_score.setPosition(83 + 88 - (to_string(tetris.score).size() - 1) * 2.3, 94 + 26);
 		num_score.setOutlineColor({ 0,0,0 });
-		num_score.setOutlineThickness(3);
+		num_score.setOutlineThickness(1);
+		// Hiển thị tốc độ 
+		stringstream stream_speed;
+		stream_speed << std::fixed << std::setprecision(2) << tetris.speed << "%";
 
-
+		Text speed_text;
+		speed_text.setFont(f);
+		speed_text.setCharacterSize(10);
+		speed_text.setFillColor(fillColor);
+		speed_text.setString(stream_speed.str());
+		speed_text.setPosition(83 + 88 - (stream_speed.str().size() - 2) * 2.3, 94 + 70);
+		speed_text.setOutlineColor({ 0,0,0 });
+		speed_text.setOutlineThickness(1);
+		// Vẽ skill kế
+		tetris.Draw_next_skill(gameWindow);
+		tetris.Draw_count_skill(gameWindow);
 		// draw
+		gameWindow.draw(CountSkill_sprite);
+		gameWindow.draw(next_equipment);
+		gameWindow.draw(speed_text);
 		gameWindow.draw(run_time);
 		gameWindow.draw(num_score);
 		gameWindow.draw(nextBlock);
 		gameWindow.draw(score);
 		gameWindow.draw(speed);
-
+		gameWindow.draw(titile2);
 		// Vẽ block kế tiếp
 		tetris.draw_next_block(gameWindow);
 		gameWindow.display();
+		if (tetris.gameOver) {
+			if (tetris.score > maxScore) {
+				maxScore = tetris.score;
+			}
+			scene = 6;
+			cout << "game over" << endl;
+			gameWindow.setView(gameWindow.getDefaultView());
+			break;
+		}
 	}
+	if (tetris.score > maxScore) {
+		maxScore = tetris.score;
+	}
+	//gameWindow.setView(View(FloatRect(0, 0, 1, 1)));
+	
 }
 
 int main()
 {
+	int index = 0;
     const int cell = 8; // Adjust the cell size if needed
     const int column = 10; // Adjust the number of columns
     const int row = 20; // Adjust the number of rows
     const float screen_size = 1.0f;
 
 	std::string playerName = "";
+	string new_mail, new_password;
+	int score = 0;
+	int max = 0;
+	bool is_login = 0;
+	bool sound_mode = 1;
+	bool music_mode = 1;
+	int mode = 1;
 	RenderWindow window(VideoMode(800, 900), "Tetris");
 
-	Texture t3, t4, t5, t6, t9;
+	Texture t3, t4, t5, t6;
 
 	t3.loadFromFile("fontPic/Email.png");
 	t4.loadFromFile("fontPic/Password.png");
 	t5.loadFromFile("fontPic/Submit.png");
-	t6.loadFromFile("fontPic/Back.png");
-	t9.loadFromFile("fontPic/LoginOk.png");
+	t6.loadFromFile("fontPic/Back.png");;
 	Sprite Email(t3);
 	Sprite Password(t4);
 	Sprite Submit(t5);
 	Sprite Back(t6);
-	Sprite LoginOK(t9);
 
 	Font arial;
 	arial.loadFromFile("fontPic/Arial.ttf");
@@ -261,7 +337,7 @@ int main()
 	textRegisterConfirmPassword.setFont(arial);
 
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("fontPic/home.png")) {
+    if (!backgroundTexture.loadFromFile("fontPic/newBack.png")) {
         std::cerr << "Error loading background texture" << std::endl;
         return 1;
     }
@@ -270,9 +346,7 @@ int main()
     backgroundSprite.setPosition(-5, -5);
 
     input();
-
     std::ofstream fout("data.txt", std::ios::in | std::ios::out);
-
 	while (window.isOpen())
 	{
 
@@ -282,11 +356,16 @@ int main()
 			{
 				fout << acc[j].email << "\n";
 				fout << acc[j].password << "\n";
+				cout << "ghi file " << acc[j].maxScore << endl;
+				fout << acc[j].maxScore << "\n";
 			}
 			first = false;
 		}
 		Event e;
-		string new_mail, new_password;
+		sf::RectangleShape te;
+		te.setSize(sf::Vector2f(210, 60));
+		te.setPosition(420, 470);
+		te.setFillColor(Color::Yellow);
 
 		while (window.pollEvent(e))
 		{
@@ -302,25 +381,26 @@ int main()
 					int y = Mouse::getPosition(window).y;
 					if (scene == 1)
 					{
-						if (x >= 170 && x <= 640 && y >= 470 && y <= 560)
+						if (x >= 220 && x <= 600 && y >= 447 && y <= 572)
 						{
 							// START
-							playGame(fout, cell, column, row,screen_size);
+							playGame(window, fout, cell, column, row,screen_size, score);
+							
 						}
-						if (x >= 233 && x <= 583 && y >= 607 && y <= 667)
+						if (x >= 270 && x <= 548 && y >= 592 && y <= 687)
 						{
 							// LOGIN
 							scene = 2;
 						}
-						if (x >= 233 && x <= 583 && y >= 700 && y <= 760)
+						if (x >= 233 && x <= 583 && y >= 715 && y <= 810)
 						{
 							// REGISTER
 							scene = 3;
 						}
-						if (x >= 720 && x <= 780 && y >= 17 && y <= 52)
+						if (x >= 700 && x <= 795 && y >= 30 && y <= 100)
 						{
 							// SETTING
-							cout << "setting" << endl;
+							scene = 5;
 						}
 					}
 					if (scene == 2)
@@ -352,8 +432,14 @@ int main()
 							{
 								for (int j = 1; j <= i; j++)
 								{
-									if (e == acc[j].email && p == acc[j].password)
+									if ((e == acc[j].email && p == acc[j].password)
+										|| (new_mail == e && new_password == p))
 									{
+										index = j;
+										if (score > acc[j].maxScore) {
+											acc[j].maxScore = score;
+											cout << acc[j].maxScore << " " << score << endl;
+										}
 										playerName = e;
 										scene = 4;
 									}
@@ -397,6 +483,8 @@ int main()
 							{
 								if (p == cp)
 								{
+									new_mail = e;
+									new_password = p;
 									fout << e << "\n";
 									fout << p << "\n";
 								}
@@ -404,8 +492,111 @@ int main()
 						}
 					}
 					if (scene == 4) {
-						if (x >= 300 && x <= 500 && y >= 400 && y <= 500) {
-							playGame(fout,cell,column,row, screen_size);
+						if (x >= 220 && x <= 600 && y >= 447 && y <= 572)
+						{
+							// START
+							playGame(window,fout, cell, column, row, screen_size, score);
+							std::string e, p;
+							e = textLoginEmail.getText();
+							p = textLoginPassword.getText();
+
+							for (int j = 1; j <= i; j++)
+							{
+								if ((e == acc[j].email && p == acc[j].password)
+									|| (new_mail == e && new_password == p))
+								{
+									cout << acc[j].maxScore << " " << score << endl;
+									if (score > acc[j].maxScore) {
+										acc[j].maxScore = score;
+										cout << "update" << endl;
+									}
+								}
+							}
+							
+						}
+						if (x >= 700 && x <= 795 && y >= 30 && y <= 100)
+						{
+							// SETTING
+							scene = 5;
+						}
+					}
+					if (scene == 5) {
+						if (x >= 536 && x <= 616 && y >= 173 && y <= 253)
+						{
+							//quit
+							if (is_login == 0)
+								scene = 1;
+							else scene = 4;
+						}
+						if (x >= 266 && x <= 356 && y >= 342 && y <= 432)
+						{
+							//change setting sound
+							if (sound_mode == 1) {
+								sound_mode = 0;
+							}
+							else {
+								sound_mode = 1;
+							}
+						}
+						if (x >= 422 && x <= 502 && y >= 342 && y <= 432)
+						{
+							//change setting music
+							if (music_mode == 1) {
+								music_mode = 0;
+							}
+							else {
+								music_mode = 1;
+							}
+						}
+						if (x >= 284 && x <= 504 && y >= 452 && y <= 502)
+						{
+							//easy
+							mode = 1;
+
+						}
+						if (x >= 284 && x <= 504 && y >= 514 && y <= 564)
+						{
+							//medium
+							mode = 2;
+
+						}
+						if (x >= 284 && x <= 504 && y >= 577 && y <= 627)
+						{
+							//hard
+							mode = 3;
+
+						}
+					}
+					if (scene == 6) {
+						if (x >= 420 && x <= 630 && y >= 382 && y <= 442)
+						{
+							//restart
+							playGame(window, fout, cell, column, row, screen_size, score);
+							std::string e, p;
+							e = textLoginEmail.getText();
+							p = textLoginPassword.getText();
+
+							for (int j = 1; j <= i; j++)
+							{
+								if ((e == acc[j].email && p == acc[j].password)
+									|| (new_mail == e && new_password == p))
+								{
+									cout << e << " " << p << " " << acc[j].maxScore << endl;
+									if (score > acc[j].maxScore) {
+										acc[j].maxScore = score;
+										cout << acc[j].maxScore << " " << score << endl;
+									}
+								}
+							}
+							
+						}
+						if (x >= 420 && x <= 630 && y >= 470 && y <= 532)
+						{
+							//go home
+							if (is_login == 1) {
+								scene = 4;
+							}
+							else scene = 1;
 						}
 					}
 				}
@@ -499,12 +690,11 @@ int main()
 		}
 		if (scene == 2)
 		{
-			draw_login_interface(window, Back,Submit,Email,Password);
+			draw_login_interface(window, Back, Submit, Email, Password);
 			textLoginEmail.setPosition({ 210,76 });
 			textLoginEmail.drawTo(window);
 			textLoginPassword.setPosition({ 269,237 });
 			textLoginPassword.drawTo(window);
-
 		}
 		if (scene == 3)
 		{
@@ -518,10 +708,20 @@ int main()
 		}
 		if (scene == 4)
 		{
+			is_login = 1;
 			draw_home_with_login(window, backgroundTexture, playerName);
+		}
+		if (scene == 5) {
+			draw_setting(window, sound_mode, music_mode);
+
+		}
+		if (scene == 6) {
+			draw_gameOver(window, score);
+			
 		}
 		window.display();
 	}
     window.close();
+
     return 0;
 }

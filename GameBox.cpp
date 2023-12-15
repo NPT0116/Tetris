@@ -1,23 +1,22 @@
-#include "Headers/GameBox.h"
+﻿#include "GameBox.h"
 
-
-void GameBox :: innit()
+void GameBox::innit()
 {
-box = std::vector<std::vector<unsigned int>>(row, std::vector<unsigned int>(column, 9));
+    box = std::vector<std::vector<unsigned int>>(row, std::vector<unsigned int>(column, 9));
 }
 
-void GameBox ::display()
+void GameBox::display()
 {
-    for (int i = 0 ; i < row ; i++)
+    for (int i = 0; i < row; i++)
     {
-        for (int j = 0 ; j < column; j++)
+        for (int j = 0; j < column; j++)
         {
-            cout<<box[i][j]<<" ";
-        }   
-        cout<<endl;
+            cout << box[i][j] << " ";
+        }
+        cout << endl;
     }
 }
-vector <Color> GameBox:: get_cell_colors()
+vector <Color> GameBox::get_cell_colors()
 {
     Color light_blue(0, 219, 255);
     Color blue(0, 36, 255);
@@ -28,20 +27,21 @@ vector <Color> GameBox:: get_cell_colors()
     Color red(219, 0, 0);
     Color grey(73, 73, 85);
     Color dark_blue(36, 36, 85);
-    Color background_cell(35,26,88);
+    Color background_cell(255, 189, 163, 50);
     Color White(255, 255, 255);
-    return {light_blue,blue,orange,yellow,light_green,purple,red,grey, dark_blue,background_cell,White};
+    Color Redvelvet(6, 171, 165);
+    Color invisible(0, 0, 0, 0);
+    return { light_blue,blue,orange,yellow,light_green,purple,red,grey, dark_blue,background_cell,White,Redvelvet, invisible };
 }
-void GameBox ::  draw_cell(RenderWindow &window)
+void GameBox::draw_cell(RenderWindow& window)
 {
-    for (int i = 0 ; i < row ; i++)
+    for (int i = 0; i < row; i++)
     {
-        for (int j = 0 ; j < column; j++)
+        for (int j = 0; j < column; j++)
         {
             int cell_value = box[i][j];
             RectangleShape cell(Vector2f(cell_size - 1, cell_size - 1));
-
-        	cell.setPosition(static_cast<float>(cell_size * j ), static_cast<float>(cell_size * i ));
+            cell.setPosition(65 + static_cast<float>(cell_size * j), 90 + static_cast<float>(cell_size * i));
             cell.setFillColor(colors[cell_value]);
             window.draw(cell);
         }
@@ -49,17 +49,17 @@ void GameBox ::  draw_cell(RenderWindow &window)
 }
 // check xem có cell nào vượt ra ngoài box không
 
- bool GameBox::is_cell_outside_box(int row, int column)
- {
+bool GameBox::is_cell_outside_box(int row, int column)
+{
     //check row
-    if (row < 0 || row >= this -> row )
-         return true;
-    if (column < 0 || column >= this -> column)
+    if (row < 0 || row >= this->row)
+        return true;
+    if (column < 0 || column >= this->column)
         return true;
     return false;
- }
+}
 
-bool GameBox ::  is_empty_cell(int row, int col)
+bool GameBox::is_empty_cell(int row, int col)
 {
     if (box[row][col] == 9 || box[row][col] == 7)
     {
@@ -69,15 +69,15 @@ bool GameBox ::  is_empty_cell(int row, int col)
 }
 int GameBox::number_completed_row()
 {
-    int res = 0 ;
-    for (int  i = 0 ; i < row; i++)
+    int res = 0;
+    for (int i = 0; i < row; i++)
     {
-        int count  = 0 ; 
-        for (int j = 0 ; j < column; j++)
+        int count = 0;
+        for (int j = 0; j < column; j++)
         {
             if (box[i][j] != 9)
             {
-                count ++;
+                count++;
             }
         }
         if (count == column)
@@ -87,27 +87,27 @@ int GameBox::number_completed_row()
     }
     return res;
 }
-void GameBox:: move_row(int row_index,int completed)
+void GameBox::move_row(int row_index, int completed)
 {
-    for (int  i = 0 ; i < column; i++)
+    for (int i = 0; i < column; i++)
     {
         box[row_index + completed][i] = box[row_index][i];
         // box[row_index][i] = 9;
     }
 }
-void GameBox ::  clear_row(int row)
+void GameBox::clear_row(int row)
 {
 
-    for (int i = 0 ; i < column ; i ++)
+    for (int i = 0; i < column; i++)
     {
         box[row][i] = 10;
     }
-    
+
 }
-bool GameBox :: is_completed_row(int row)
+bool GameBox::is_completed_row(int row)
 {
-    int count = 0 ;
-    for (int i = 0 ;  i < column; i++)
+    int count = 0;
+    for (int i = 0; i < column; i++)
     {
         if (box[row][i] == 9)
             return false;
@@ -116,15 +116,14 @@ bool GameBox :: is_completed_row(int row)
     return true;
 
 }
-int GameBox :: update_box(RenderWindow &window)
+int GameBox::update_box(RenderWindow& window)
 {
-    int count = 0 ;
-    for (int i = row - 1 ; i >= 0 ; i--)
+    int count = 0;
+    for (int i = row - 1; i >= 0; i--)
     {
         if (is_completed_row(i))
         {
-
-            count ++;
+            count++;
             clear_row(i);
             draw_cell(window);
         }
@@ -133,22 +132,22 @@ int GameBox :: update_box(RenderWindow &window)
             sleep(seconds(0.01f));
             move_row(i, count);
         }
-        else {      
-            move_row(i, count); 
+        else {
+            move_row(i, count);
         }
     }
-    return count; 
+    return count;
 }
 
-void GameBox :: game_over()
+void GameBox::game_over()
 {
-    for (int  i = 0 ; i < row ; i++)
+    for (int i = 0; i < row; i++)
     {
-        for (int j = 0 ; j < column ; j++)
+        for (int j = 0; j < column; j++)
         {
             if (box[i][j] != 9)
             {
-                box [i][j] = 7;
+                box[i][j] = 7;
             }
         }
     }
