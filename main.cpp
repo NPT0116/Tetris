@@ -22,22 +22,23 @@ struct account
 {
     std::string email;
     std::string password;
-	int maxScore = 0;
 };
 
 int scene = 1, i = 1;
 scn2 scene2;
 scn3 scene3;
 account acc[100];
+int scoreList[100];
 bool first = true;
 
 void input( )
 {
     std::ifstream fin("data.txt", std::ios::in | std::ios::out);
+	std::ifstream highIn("highScore.txt", std::ios::in | std::ios::out);
     while (fin >> acc[i].email)
     {
         fin >> acc[i].password;
-		fin >> acc[i].maxScore;
+		highIn >> scoreList[i];
         i++;
     }
     fin.close();
@@ -58,23 +59,6 @@ bool trigger_event(Clock& clock, float& elapsedTime, float interval)
     return false;
 }
 
-sf::Text createText(const std::string& fontPath, const std::string& textString, int characterSize, const sf::Color& fillColor, float posX, float posY)
-{
-    sf::Text text;
-    sf::Font font;
-    if (!font.loadFromFile(fontPath))
-    {
-        std::cerr << "Error loading font: " << fontPath << std::endl;
-    }
-    text.setFont(font);
-    text.setCharacterSize(characterSize);
-    text.setFillColor(fillColor);
-    text.setString(textString);
-    text.setPosition(posX, posY);
-
-    return text;
-}
-
 sf::RectangleShape createRectangleShape(float sizeX, float sizeY, float posX, float posY, const sf::Color& fillColor)
 {
     sf::RectangleShape rectangle;
@@ -85,7 +69,7 @@ sf::RectangleShape createRectangleShape(float sizeX, float sizeY, float posX, fl
     return rectangle;
 }
 
-void playGame(RenderWindow& gameWindow, ofstream &fout, int cell, int column, int row, int screen_size, int &maxScore) {
+void playGame(RenderWindow& gameWindow, ofstream &fout, int cell, int column, int row, int screen_size, int &Score, int &max, int mode, bool sound_mode, bool music_mode) {
 	gameWindow.setView(View(FloatRect(5, 35, 200, 225)));
 	//text - ingame
 	string font = "resoure/CallOfOpsDutyIi-7Bgm4.ttf";
@@ -204,7 +188,6 @@ void playGame(RenderWindow& gameWindow, ofstream &fout, int cell, int column, in
 		}
 		{
 			gameWindow.clear(Color(0, 0, 0));
-			//cout << "clear" << endl;
 		}
 		gameWindow.draw(backgroundSprite);
 		gameWindow.draw(recBack);
@@ -275,20 +258,18 @@ void playGame(RenderWindow& gameWindow, ofstream &fout, int cell, int column, in
 		tetris.draw_next_block(gameWindow);
 		gameWindow.display();
 		if (tetris.gameOver) {
-			if (tetris.score > maxScore) {
-				maxScore = tetris.score;
+			if (tetris.score > max) {
+				max = tetris.score;
 			}
+			Score = tetris.score;
 			scene = 6;
-			cout << "game over" << endl;
 			gameWindow.setView(gameWindow.getDefaultView());
 			break;
 		}
 	}
-	if (tetris.score > maxScore) {
-		maxScore = tetris.score;
+	if (tetris.score > max) {
+		max = tetris.score;
 	}
-	//gameWindow.setView(View(FloatRect(0, 0, 1, 1)));
-	
 }
 
 int main()
@@ -302,7 +283,6 @@ int main()
 	std::string playerName = "";
 	string new_mail, new_password;
 	int score = 0;
-	int max = 0;
 	bool is_login = 0;
 	bool sound_mode = 1;
 	bool music_mode = 1;
@@ -347,17 +327,28 @@ int main()
 
     input();
     std::ofstream fout("data.txt", std::ios::in | std::ios::out);
+	std::ofstream highOut("highScore.txt", std::ios::in | std::ios::out);
+
+	Music game_sound;
+	game_sound.openFromFile("resoure/back_ground_sound.mp3");
+	game_sound.setVolume(60);
+	Music click;
+	click.openFromFile("resoure/click.mp3");
+	click.setVolume(60);
+	Music err;
+	err.openFromFile("resoure/err.mp3");
+	err.setVolume(60);
+	game_sound.play();
+
 	while (window.isOpen())
 	{
-
+		int max = scoreList[index];
 		if (first == true)
 		{
 			for (int j = 1; j < i; j++)
 			{
 				fout << acc[j].email << "\n";
 				fout << acc[j].password << "\n";
-				cout << "ghi file " << acc[j].maxScore << endl;
-				fout << acc[j].maxScore << "\n";
 			}
 			first = false;
 		}
@@ -383,23 +374,40 @@ int main()
 					{
 						if (x >= 220 && x <= 600 && y >= 447 && y <= 572)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
 							// START
-							playGame(window, fout, cell, column, row,screen_size, score);
-							
+							x = 0; y = 0;
+							game_sound.stop();
+							playGame(window, fout, cell, column, row,screen_size, score, max, mode, sound_mode, music_mode);
+							game_sound.play();
 						}
 						if (x >= 270 && x <= 548 && y >= 592 && y <= 687)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
 							// LOGIN
+							x = 0; y = 0;
 							scene = 2;
 						}
 						if (x >= 233 && x <= 583 && y >= 715 && y <= 810)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
 							// REGISTER
+							x = 0; y = 0;
 							scene = 3;
 						}
 						if (x >= 700 && x <= 795 && y >= 30 && y <= 100)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
 							// SETTING
+							x = 0; y = 0;
 							scene = 5;
 						}
 					}
@@ -408,23 +416,37 @@ int main()
 						// back
 						if (x >= 275 && x <= 510 && y >= 540 && y <= 610)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							scene = 1;
 						}
 						if (x >= 22 && x <= 722 && y >= 71 && y <= 141)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
 							// click on email
+							x = 0; y = 0;
 							scene2.email = true;
 							textLoginEmail.setSelected(true);
 						}
 						if (x >= 22 && x <= 722 && y >= 225 && y <= 295)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
 							//click on password
+							x = 0; y = 0;
 							scene2.password = true;
 							textLoginPassword.setSelected(true);
 						}
 						// submit
 						if (x >= 230 && x <= 560 && y >= 405 && y <= 511)
 						{
+							
+							x = 0; y = 0;
 							std::string e, p;
 							e = textLoginEmail.getText();
 							p = textLoginPassword.getText();
@@ -436,13 +458,17 @@ int main()
 										|| (new_mail == e && new_password == p))
 									{
 										index = j;
-										if (score > acc[j].maxScore) {
-											acc[j].maxScore = score;
-											cout << acc[j].maxScore << " " << score << endl;
-										}
 										playerName = e;
 										scene = 4;
 									}
+								}
+								if (sound_mode == 1) {
+									click.play();
+								}
+							}
+							else {
+								if (sound_mode == 1) {
+									err.play();
 								}
 							}
 						}
@@ -452,29 +478,47 @@ int main()
 						// back
 						if (x >= 275 && x <= 510 && y >= 640 && y <= 710)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							scene = 1;
 						}
 						// email
 						if (x >= 15 && x <= 715 && y >= 55 && y <= 125)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							scene3.email = true;
 							textRegisterEmail.setSelected(true);
 						}
 						// password
 						if (x >= 15 && x <= 715 && y >= 198 && y <= 268)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							scene3.password = true;
 							textRegisterPassword.setSelected(true);
 						}
 						// confirm password
 						if (x >= 15 && x <= 715 && y >= 340 && y <= 410)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							scene3.confirmPassword = true;
 							textRegisterConfirmPassword.setSelected(true);
 						}
 						//submit
 						if (x >= 230 && x <= 560 && y >= 505 && y <= 610)
 						{
+							
+							x = 0; y = 0;
 							std::string e, p, cp;
 							e = textRegisterEmail.getText();
 							p = textRegisterPassword.getText();
@@ -487,6 +531,15 @@ int main()
 									new_password = p;
 									fout << e << "\n";
 									fout << p << "\n";
+									scene = 1;
+									if (sound_mode == 1) {
+										click.play();
+									}
+								}
+								else {
+									if (sound_mode == 1) {
+										err.play();
+									}
 								}
 							}
 						}
@@ -494,28 +547,21 @@ int main()
 					if (scene == 4) {
 						if (x >= 220 && x <= 600 && y >= 447 && y <= 572)
 						{
-							// START
-							playGame(window,fout, cell, column, row, screen_size, score);
-							std::string e, p;
-							e = textLoginEmail.getText();
-							p = textLoginPassword.getText();
-
-							for (int j = 1; j <= i; j++)
-							{
-								if ((e == acc[j].email && p == acc[j].password)
-									|| (new_mail == e && new_password == p))
-								{
-									cout << acc[j].maxScore << " " << score << endl;
-									if (score > acc[j].maxScore) {
-										acc[j].maxScore = score;
-										cout << "update" << endl;
-									}
-								}
+							if (sound_mode == 1) {
+								click.play();
 							}
-							
+							// START
+							x = 0; y = 0;
+							game_sound.stop();
+							playGame(window, fout, cell, column, row, screen_size, score, max, mode, sound_mode, music_mode);
+							game_sound.play();
 						}
 						if (x >= 700 && x <= 795 && y >= 30 && y <= 100)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							// SETTING
 							scene = 5;
 						}
@@ -523,6 +569,10 @@ int main()
 					if (scene == 5) {
 						if (x >= 536 && x <= 616 && y >= 173 && y <= 253)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//quit
 							if (is_login == 0)
 								scene = 1;
@@ -530,6 +580,10 @@ int main()
 						}
 						if (x >= 266 && x <= 356 && y >= 342 && y <= 432)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//change setting sound
 							if (sound_mode == 1) {
 								sound_mode = 0;
@@ -540,28 +594,46 @@ int main()
 						}
 						if (x >= 422 && x <= 502 && y >= 342 && y <= 432)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//change setting music
 							if (music_mode == 1) {
 								music_mode = 0;
+								game_sound.stop();
 							}
 							else {
 								music_mode = 1;
+								game_sound.play();
 							}
 						}
 						if (x >= 284 && x <= 504 && y >= 452 && y <= 502)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//easy
 							mode = 1;
 
 						}
 						if (x >= 284 && x <= 504 && y >= 514 && y <= 564)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//medium
 							mode = 2;
 
 						}
 						if (x >= 284 && x <= 504 && y >= 577 && y <= 627)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//hard
 							mode = 3;
 
@@ -570,28 +642,21 @@ int main()
 					if (scene == 6) {
 						if (x >= 420 && x <= 630 && y >= 382 && y <= 442)
 						{
-							//restart
-							playGame(window, fout, cell, column, row, screen_size, score);
-							std::string e, p;
-							e = textLoginEmail.getText();
-							p = textLoginPassword.getText();
-
-							for (int j = 1; j <= i; j++)
-							{
-								if ((e == acc[j].email && p == acc[j].password)
-									|| (new_mail == e && new_password == p))
-								{
-									cout << e << " " << p << " " << acc[j].maxScore << endl;
-									if (score > acc[j].maxScore) {
-										acc[j].maxScore = score;
-										cout << acc[j].maxScore << " " << score << endl;
-									}
-								}
+							if (sound_mode == 1) {
+								click.play();
 							}
-							
+							x = 0; y = 0;
+							//restart
+							game_sound.stop();
+							playGame(window, fout, cell, column, row, screen_size, score, max, mode, sound_mode, music_mode);
+							game_sound.play();
 						}
 						if (x >= 420 && x <= 630 && y >= 470 && y <= 532)
 						{
+							if (sound_mode == 1) {
+								click.play();
+							}
+							x = 0; y = 0;
 							//go home
 							if (is_login == 1) {
 								scene = 4;
@@ -601,6 +666,7 @@ int main()
 					}
 				}
 			}
+			
 			if (e.type == Event::TextEntered)
 			{
 				if (scene == 2)
@@ -709,17 +775,24 @@ int main()
 		if (scene == 4)
 		{
 			is_login = 1;
-			draw_home_with_login(window, backgroundTexture, playerName);
+			draw_home_with_login(window, backgroundTexture, playerName, scoreList[index]);
 		}
 		if (scene == 5) {
 			draw_setting(window, sound_mode, music_mode);
 
 		}
 		if (scene == 6) {
-			draw_gameOver(window, score);
+			draw_gameOver(window, score, max);
 			
 		}
+		if (max > scoreList[index]) {
+			scoreList[index] = max;
+		}
 		window.display();
+	}
+	for (int j = 1; j <= i; j++)
+	{
+		highOut << scoreList[j] << endl;
 	}
     window.close();
 
