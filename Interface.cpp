@@ -111,7 +111,8 @@ void draw_home_without_login(RenderWindow& window, Texture backgroundTexture) {
 	window.draw(regisText);
 }
 
-void draw_home_with_login(sf::RenderWindow& window, sf::Texture backgroundTexture, std::string playerName) {
+void draw_home_with_login(sf::RenderWindow& window, sf::Texture backgroundTexture, std::string playerName, int highestScore) {
+	Font f; f.loadFromFile("resoure/CallOfOpsDutyIi-7Bgm4.ttf");
 	draw_start(window, backgroundTexture);
 	Text welcome;
 	Font bubble; bubble.loadFromFile("fontPic/bubble.otf");
@@ -128,11 +129,26 @@ void draw_home_with_login(sf::RenderWindow& window, sf::Texture backgroundTextur
 		std::cerr << "Error loading background texture" << std::endl;
 		return;
 	}
+	Text highNum;
+	highNum.setFont(f);
+	highNum.setCharacterSize(100);
+	highNum.setFillColor(Color(255, 202, 21));
+	highNum.setOutlineColor(Color(236, 147, 65));
+	highNum.setOutlineThickness(3);
+	std::string numScore = std::to_string(highestScore);
+	highNum.setString(numScore);
+	textBounds = highNum.getLocalBounds();
+	highNum.setOrigin(textBounds.left + textBounds.width / 2.0f,
+	textBounds.top + textBounds.height / 2.0f);
+	highNum.setPosition(window.getSize().x / 2.0f - 5, 783);
+
 	sf::Sprite highBoard(high);
 	highBoard.setScale(static_cast<float>(500) / high.getSize().x, static_cast<float>(320) / high.getSize().y);
 	highBoard.setPosition(160, 570);
+
 	window.draw(highBoard);
 	window.draw(welcome);
+	window.draw(highNum);
 }
 
 void draw_login_interface(sf::RenderWindow& window, sf::Sprite Back, sf::Sprite Submit, sf::Sprite Email, sf::Sprite Password) {
@@ -315,7 +331,7 @@ void draw_setting(sf::RenderWindow& window, bool sound_mode, bool music_mode) {
 
 }
 
-void draw_gameOver(sf::RenderWindow& window, int scoreCur) {
+void draw_gameOver(sf::RenderWindow& window, int scoreCur, int highestScore) {
 	Font f; f.loadFromFile("fontPic/game.ttf");
 	Text overText;
 	overText.setFont(f);
@@ -324,7 +340,7 @@ void draw_gameOver(sf::RenderWindow& window, int scoreCur) {
 	overText.setOutlineColor(Color(236, 147, 65));
 	overText.setOutlineThickness(4);
 	overText.setString("GAME OVER");
-	overText.setPosition(145, 110);
+	overText.setPosition(195, 110);
 
 	Text score;
 	score.setFont(f);
@@ -354,6 +370,14 @@ void draw_gameOver(sf::RenderWindow& window, int scoreCur) {
 	highest.setString("Highest \n score");
 	highest.setPosition(180, 330);
 
+	Text highNum;
+	highNum.setFont(f);
+	highNum.setCharacterSize(60);
+	highNum.setFillColor(Color(236, 147, 65));
+	std::string numScore = std::to_string((scoreCur > highestScore) ? scoreCur : highestScore);
+	highNum.setString(numScore);
+	highNum.setPosition(200, 450);
+
 	Text home;
 	home.setFont(f);
 	home.setCharacterSize(30);
@@ -381,6 +405,7 @@ void draw_gameOver(sf::RenderWindow& window, int scoreCur) {
 	window.draw(overText);
 	window.draw(score);
 	window.draw(highest);
+	window.draw(highNum);
 	window.draw(home);
 	window.draw(scoreNum);
 	window.draw(replay);
